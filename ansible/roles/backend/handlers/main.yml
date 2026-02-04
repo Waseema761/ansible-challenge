@@ -1,3 +1,5 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# handlers file for roles/backend
+- name: Restart Netdata
+  service:
+    name: netdata
+    state: restarted
