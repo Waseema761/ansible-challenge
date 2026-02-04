@@ -1,0 +1,35 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Install Nginx
+  yum:
+    name: nginx
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure nginx config directory exists
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    mode: '0755'
+
+- name: Configure Nginx reverse proxy
+  copy:
+    dest: /etc/nginx/conf.d/netdata.conf
+    content: |
+      server {
+          listen 80;
+          location / {
+              proxy_pass http://{{ hostvars[groups['backend'][0]].ansible_host }}:19999;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+      }
+
+- name: Start and enable Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+# tasks file for roles/frontend

@@ -1,0 +1,18 @@
+---
+- name: Common configuration on all servers
+  hosts: all
+  become: yes
+  roles:
+    - common
+
+- name: Backend configuration (Netdata)
+  hosts: backend
+  become: yes
+  roles:
+    - backend
+
+- name: Frontend configuration (Nginx reverse proxy)
+  hosts: frontend
+  become: yes
+  roles:
+    - frontend

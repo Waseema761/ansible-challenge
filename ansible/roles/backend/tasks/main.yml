@@ -1,0 +1,27 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Update apt cache (Ubuntu)
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Netdata from official repositories
+  apt:
+    name: netdata
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Ensure Netdata is running and enabled
+  service:
+    name: netdata
+    state: started
+    enabled: yes
+
+- name: Ensure Netdata listens on port 19999
+  lineinfile:
+    path: /etc/netdata/netdata.conf
+    regexp: '^\\s*default port ='
+    line: '    default port = 19999'
+  notify: Restart Netdata
+
+# tasks file for roles/backend
